@@ -97,6 +97,12 @@
   set nofoldenable
   set showmatch
   set lazyredraw
+  " Disable the stupid beeping
+  set visualbell
+  set t_vb=
+  " Cursor bar in insert mode
+  let &t_SI = "\e[6 q"
+  let &t_EI = "\e[2 q"
 
   "" Editing
   set backspace=indent,start
