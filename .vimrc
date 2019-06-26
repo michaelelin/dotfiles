@@ -14,9 +14,40 @@
 
   Plugin 'VundleVim/Vundle.vim'
 
+  Plugin 'guns/vim-sexp'
+  let g:sexp_enable_insert_mode_mappings = 0
+
+  Plugin 'kovisoft/slimv'
+  "let g:slimv_swank_cmd = "(echo '(load \"~/.vim/bundle/slimv/slime/start-swank.lisp\")' && cat) | sbcl"
+  "let g:slimv_swank_cmd = "(echo ':q\n(load \"~/.vim/bundle/slimv/slime/start-swank.lisp\")' && cat) | acl2s"
+  "let g:slimv_swank_cmd = "!tmux new-window -d -n REPL-SBCL \"(echo ':q\\\n(load \\\"~/.vim/bundle/slimv/slime/start-swank.lisp\\\")\\\n(lp)' && cat) | acl2s\""
+  "let g:slimv_swank_cmd = "!tmux new-window -d -n REPL-SBCL \"(echo ':q\\\n(load \\\"~/.vim/bundle/slimv/slime/start-swank.lisp\\\")' && cat) | acl2s\""
+  let g:slimv_keybindings=0
+  let g:slimv_repl_simple_eval=0
+  "let g:paredit_mode = 0
+  nnoremap <leader>c :call SlimvConnectServer()<cr>
+  nmap <C-m> :<C-u>call SlimvEvalDefun()<cr>]]
+  nnoremap <leader>( :<C-u>call PareditToggle()<cr>
+  nunmap <cr>
+
+  Plugin 'jpalardy/vim-slime'
+  let g:slime_target = "tmux"
+  let g:slime_no_mappings = 1
+  let g:slime_dont_ask_default = 1
+  let g:slime_default_config = {"socket_name": "default", "target_pane": "{right-of}"}
+  nmap <leader>lk <Plug>SlimeLineSend +
+  "nmap <leader>ll <Plug>SlimeParagraphSend },lmj
+  nmap <leader>ll vaF:SlimeSend<cr>]]
+  nmap <c-n> vaF:SlimeSend<cr>]]
+  nmap <leader>lv <Plug>SlimeConfig
+  nmap <leader>lu :SlimeSend1 :u<cr>
+  nmap <leader>lw :SlimeSend1 (load "~/.vim/bundle/slimv/slime/start-swank.lisp")<cr>
+  vmap <leader>l :SlimeSend<cr>
+
   Plugin 'wincent/command-t'
   let g:CommandTAcceptSelectionSplitMap = "<C-s>"
   let g:CommandTInputDebounce = 50
+  let g:CommandTTraverseSCM = "pwd"
   set wildignore=*.pyc
 
 
@@ -26,21 +57,12 @@
   let g:syntastic_check_on_open = 1
   let g:syntastic_check_on_wq = 0
   let b:syntastic_mode = 'passive'
+  let g:syntastic_ocaml_checkers = ['merlin']
   nnoremap <leader>s :SyntasticToggleMode<cr>
 
   Plugin 'mileszs/ack.vim'
   let g:ack_use_dispatch = 1
   nnoremap <leader>a :Ack!
-
-  Plugin 'jpalardy/vim-slime'
-  let g:slime_target = "tmux"
-  let g:slime_no_mappings = 1
-  nmap <leader>lk <Plug>SlimeLineSend +
-  "nmap <leader>ll <Plug>SlimeParagraphSend },lmj
-  nmap <leader>ll vaF:SlimeSend<cr>]],lm
-  nmap <leader>lv <Plug>SlimeConfig
-  nmap <leader>lu :SlimeSend1 :u<cr>
-  vmap <leader>l :SlimeSend<cr>
 
   Plugin 'lervag/vimtex'
   let g:vimtex_compiler_latexmk = {
@@ -66,13 +88,20 @@
   Plugin 'christoomey/vim-tmux-navigator'
   Plugin 'scrooloose/nerdcommenter'
   Plugin 'Vimjas/vim-python-pep8-indent'
+  Plugin 'will133/vim-dirdiff'
+  Plugin 'dhruvasagar/vim-table-mode'
+  let g:table_mode_map_prefix = "<leader>m"
 
-  Plugin 'guns/vim-sexp'
-  let g:sexp_enable_insert_mode_mappings = 0
-
+  Plugin 'let-def/ocp-indent-vim'
+  "let g:ocp_indent_args = 'strict_comments=false'
+  "let g:ocp_indent_args = 'match_clause=3'
+  "let g:ocp_indent_args = '--config match_clause=3'
 
   call vundle#end()
   filetype plugin indent on
+
+  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+  execute "set rtp+=" . g:opamshare . "/merlin/vim"
 " }}}
 " Global Settings: {{{
   set encoding=utf-8
@@ -93,7 +122,7 @@
   set termguicolors
   let ayucolor = "dark"
   colorscheme ayu
-  set foldmethod=indent
+  "set foldmethod=indent
   set nofoldenable
   set showmatch
   set lazyredraw
@@ -145,8 +174,9 @@
   "" Clipboard
   " Perl voodoo to strip the newline before copying to OSX clipboard
   " I should adapt this to Linux
-  vnoremap <C-y> y:new ~/vim_clip<cr>VGp:wq<cr>:!perl -pe 'chomp if eof' ~/vim_clip \| pbcopy<cr><cr>
+  vnoremap <C-y> y:new ~/vim_clip<cr>VGp:w<cr>:bd<cr>:!perl -pe 'chomp if eof' ~/vim_clip \| pbcopy<cr><cr>
   nnoremap <C-p> :read ~/vim_clip<cr>
+  nnoremap <leader>p :set invpaste<cr>
 
   "" vimrc
   nnoremap <leader>ve :vsplit $MYVIMRC<cr>
@@ -154,12 +184,14 @@
   nnoremap <leader>vs :source $MYVIMRC<cr>
 
   "" Movement
+  set mouse=a
+  if !has('nvim')
+    set ttymouse=xterm2
+  endif
   " <M-j>
-  nnoremap ∆ j<C-e>
-  vnoremap ∆ j<C-e>
+  noremap ∆ j<C-e>
   " <M-k>
-  nnoremap ˚ k<C-y>
-  vnoremap ˚ k<C-y>
+  noremap ˚ k<C-y>
   inoremap <C-h> <left>
   inoremap <C-j> <down>
   inoremap <C-k> <up>
@@ -187,7 +219,7 @@
   inoremap jk <esc>
   nnoremap - ddp
   nnoremap _ ddkP
-  nnoremap <tab> ddko
+  nnoremap <tab> cc
 " }}}
 " Filetype Settings: {{{
   augroup filetype_vim
@@ -219,7 +251,12 @@
   augroup filetype_lisp
     autocmd!
     autocmd FileType lisp :highlight executed guibg=#222222
-    set lispwords+=match
+    set lispwords+=defunc,definec,match,defrule,deftest,defthm
     "autocmd FileType lisp nmap <leader>lm :match executed /\%<<C-r>=line('.')<cr>l/<cr>
+  augroup END
+
+  augroup filetype_ocaml
+    autocmd!
+    autocmd FileType ocaml nnoremap <buffer> <localleader>m :MerlinTypeOf<cr>
   augroup END
 " }}}
