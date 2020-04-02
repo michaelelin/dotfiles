@@ -25,11 +25,14 @@
     Plugin 'scrooloose/nerdcommenter'
     Plugin 'Vimjas/vim-python-pep8-indent'
     Plugin 'will133/vim-dirdiff'
+    Plugin 'tpope/vim-eunuch'
 
     Plugin 'wincent/command-t'
     let g:CommandTInputDebounce = 50
     let g:CommandTTraverseSCM = "pwd"
     set wildignore=*.pyc
+
+    Plugin 'maxmellon/vim-jsx-pretty'
 
 
     Plugin 'vim-syntastic/syntastic'
