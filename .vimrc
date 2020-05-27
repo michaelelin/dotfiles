@@ -27,10 +27,9 @@
     Plugin 'will133/vim-dirdiff'
     Plugin 'tpope/vim-eunuch'
 
-    Plugin 'wincent/command-t'
-    let g:CommandTInputDebounce = 50
-    let g:CommandTTraverseSCM = "pwd"
-    set wildignore=*.pyc
+    Plugin 'junegunn/fzf'
+    Plugin 'junegunn/fzf.vim'
+    nnoremap <leader>t :Files<cr>
 
     Plugin 'maxmellon/vim-jsx-pretty'
 
